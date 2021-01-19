@@ -1,5 +1,6 @@
 package com.example.recyclerviewdemo
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -16,18 +17,16 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import jp.wasabeef.recyclerview.animators.FadeInAnimator
-import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 
-class MainActivity: AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var mAdapter: RecyclerView.Adapter<MyViewHolder>
 
+    private val data by lazy { MutableList(4) { "content = $it" } }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mAdapter = object : RecyclerView.Adapter<MyViewHolder> () {
-            private val data by lazy { MutableList(100){ "content = $it"} }
+        mAdapter = object : RecyclerView.Adapter<MyViewHolder>() {
 
             override fun onCreateViewHolder(
                 parent: ViewGroup,
@@ -38,6 +37,8 @@ class MainActivity: AppCompatActivity() {
             }
 
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+                Log.e("MainActivity", "onBindViewHolder ${position} ${data[position]}")
+
                 holder.getView<TextView>(R.id.tv).text = data[position]
             }
 
@@ -54,44 +55,59 @@ class MainActivity: AppCompatActivity() {
 
         findViewById<RecyclerView>(R.id.rv).apply {
             layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
-            mAdapter = object : RecyclerView.Adapter<MyViewHolder> () {
-                private val data by lazy { MutableList(100){ "content = $it"} }
-
-                override fun onCreateViewHolder(
-                    parent: ViewGroup,
-                    viewType: Int
-                ): MyViewHolder {
-                    val view = layoutInflater.inflate(R.layout.item_view_layout, parent, false)
-                    view.animate().interpolator = CycleInterpolator(10f)
-                    return MyViewHolder(view)
-                }
-
-                override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-                    holder.getView<TextView>(R.id.tv).text = data[position]
-                }
-
-                override fun getItemCount(): Int {
-                    return data.size
-                }
-            }
+//            mAdapter = object : RecyclerView.Adapter<MyViewHolder> () {
+//                private val data by lazy { MutableList(100){ "content = $it"} }
+//
+//                override fun onCreateViewHolder(
+//                    parent: ViewGroup,
+//                    viewType: Int
+//                ): MyViewHolder {
+//                    val view = layoutInflater.inflate(R.layout.item_view_layout, parent, false)
+//                    view.animate().interpolator = CycleInterpolator(10f)
+//                    return MyViewHolder(view)
+//                }
+//
+//                override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+//                    holder.getView<TextView>(R.id.tv).text = data[position]
+//                }
+//
+//                override fun getItemCount(): Int {
+//                    return data.size
+//                }
+//            }
             itemAnimator = ColorItemAnimator()
 
             adapter = mAdapter
-            Log.e("MainActivity","onCreate $itemAnimator")
+            Log.e("MainActivity", "onCreate $itemAnimator")
         }
     }
+
     private val mHandler = Handler(Looper.getMainLooper())
 
-    fun onClick(view:View) {
+    fun onClick(view: View) {
+
+        val get = data.get(0)
+
+        data.removeAt(0)
+//        data.add(get)
+
         mAdapter.notifyItemRemoved(0)
         mHandler.postDelayed({
-
-            onClick(view)
+            data.add(get)
+            mAdapter.notifyItemInserted(data.size - 1)
+            mHandler.postDelayed({
+                onClick(view)
+            }, 100)
         }, 1100)
+//        mAdapter.notifyItemRangeChanged(0, data.size)
+//        mHandler.postDelayed({
+//
+//            onClick(view)
+//        }, 1100)
     }
 }
 
-class MyViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
     fun <T : View> getView(id: Int) = view.findViewById<T>(id)
 
