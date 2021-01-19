@@ -63,11 +63,15 @@ class ColorItemAnimator : DefaultItemAnimator(){
     }
 
     override fun getRemoveDuration(): Long {
-        return mDuration.toLong()
+        val allStackTraces = Thread.getAllStackTraces()
+        val isRemove =
+            Thread.currentThread().stackTrace.map { it.methodName }.contains("animateRemoveImpl")
+
+        return if (isRemove) 1000 else 0
     }
 
     override fun getMoveDuration(): Long {
-        return 500
+        return 1000
     }
     class ColorTextInfo : ItemHolderInfo() {
 

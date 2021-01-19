@@ -2,6 +2,8 @@ package com.example.recyclerviewdemo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +53,7 @@ class MainActivity: AppCompatActivity() {
 //        }
 
         findViewById<RecyclerView>(R.id.rv).apply {
-            layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.VERTICAL, false)
+            layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
             mAdapter = object : RecyclerView.Adapter<MyViewHolder> () {
                 private val data by lazy { MutableList(100){ "content = $it"} }
 
@@ -72,16 +74,20 @@ class MainActivity: AppCompatActivity() {
                     return data.size
                 }
             }
-            itemAnimator = DefaultItemAnimator()
+            itemAnimator = ColorItemAnimator()
 
             adapter = mAdapter
             Log.e("MainActivity","onCreate $itemAnimator")
         }
     }
+    private val mHandler = Handler(Looper.getMainLooper())
 
     fun onClick(view:View) {
+        mAdapter.notifyItemRemoved(0)
+        mHandler.postDelayed({
 
-        mAdapter.notifyItemRemoved(1)
+            onClick(view)
+        }, 1100)
     }
 }
 
