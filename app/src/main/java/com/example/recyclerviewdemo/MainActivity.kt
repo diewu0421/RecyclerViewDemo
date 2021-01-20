@@ -17,6 +17,10 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import dalvik.system.DexFile
+import java.io.File
+import kotlin.concurrent.thread
+import kotlin.system.measureTimeMillis
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mAdapter: RecyclerView.Adapter<MyViewHolder>
@@ -104,6 +108,40 @@ class MainActivity : AppCompatActivity() {
 //
 //            onClick(view)
 //        }, 1100)
+    }
+
+    fun printDex(view: View) {
+        Log.e("MainActivity", "printDex ${Boy()}")
+        thread {
+
+            val measureTimeMillis = measureTimeMillis {
+
+                DexFile(File(applicationContext.applicationInfo.sourceDir)).entries().run {
+                    while (hasMoreElements()) {
+//                Log.e("MainActivity", "printDex ${nextElement()}")
+                        nextElement()
+                            .takeIf {
+                                it.contains("com.example.recyclerviewdemo.Boy")
+                                        && it.contains("$")
+
+                            }
+                            ?.takeIf {
+                                try {
+                                    Class.forName(it).getDeclaredField("this$0").isSynthetic
+                                } catch (e: Exception) {
+                                    false
+                                }
+                            }
+//                    ?.takeIf { it.getDeclaredField("this$0").isSynthetic }
+                            ?.let {
+                                Log.e("MainActivity", "printDex result $it")
+                            }
+
+                    }
+                }
+            }
+            Log.e("MainActivity", "printDex  time  $measureTimeMillis")
+        }
     }
 }
 

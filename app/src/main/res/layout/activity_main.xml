@@ -19,6 +19,15 @@
         android:layout_marginTop="100dp"
         android:text="测试"
         android:onClick="onClick"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="200dp"
+        android:text="遍历dex"
+        android:onClick="printDex"/>
 <!--    <androidx.viewpager2.widget.ViewPager2-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="match_parent"-->
