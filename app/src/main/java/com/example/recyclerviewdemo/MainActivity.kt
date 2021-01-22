@@ -54,7 +54,11 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         findViewById<RecyclerView>(R.id.rv).apply {
-            layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
+            layoutManager = object : LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false) {
+                override fun canScrollHorizontally(): Boolean {
+                    return false
+                }
+            }
 //            mAdapter = object : RecyclerView.Adapter<MyViewHolder> () {
 //                private val data by lazy { MutableList(100){ "content = $it"} }
 //
@@ -104,6 +108,10 @@ class MainActivity : AppCompatActivity() {
 //
 //            onClick(view)
 //        }, 1100)
+    }
+
+    fun cancel(view: View) {
+        mHandler.removeCallbacksAndMessages(null)
     }
 }
 
